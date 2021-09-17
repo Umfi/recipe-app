@@ -15,11 +15,11 @@
               <ion-popover trigger="trigger-button" trigger-action="click">
                 <ion-content>
                   <ion-list>
-                    <ion-item>
+                    <ion-item @click="showChangeEmailModal()">
                       <ion-icon :icon="mail" class="ion-padding-end"></ion-icon>
                       <ion-label>Change E-Mail</ion-label>
                     </ion-item>
-                      <ion-item>
+                      <ion-item @click="showChangePasswordModal()">
                       <ion-icon :icon="lockClosed" class="ion-padding-end"></ion-icon>
                       <ion-label>Change Password</ion-label>
                     </ion-item>
@@ -71,11 +71,12 @@
 </template>
 
 <script lang="ts">
-import { IonContent,  IonPage, IonIcon, IonLabel, IonButton, IonText, IonCol, IonRow, IonPopover, IonList, IonItem } from '@ionic/vue';
+import { IonContent,  IonPage, IonIcon, IonLabel, IonButton, IonText, IonCol, IonRow, IonPopover, IonList, IonItem, modalController, popoverController } from '@ionic/vue';
 import { arrowBack, logOut, settings, mail, lockClosed } from 'ionicons/icons';
 import RecipeCardItem from "@/components/RecipeCardItem.vue";
 
-
+import ChangeEmailModal from "./ChangeEmailModal.vue"
+import ChangePasswordModal from './ChangePasswordModal.vue';
 
 export default {
   name: 'Profile',
@@ -143,6 +144,28 @@ export default {
           }
       ]
     };
+  },
+  methods: {
+    async showChangeEmailModal() {
+      popoverController.dismiss();
+      const modal = await modalController
+        .create({
+          component: ChangeEmailModal,
+          initialBreakpoint: 0.4,
+          breakpoints: [0, 0.4, 1]
+        })
+      return modal.present();
+    },
+    async showChangePasswordModal() {
+      popoverController.dismiss();
+      const modal = await modalController
+        .create({
+          component: ChangePasswordModal,
+          initialBreakpoint: 0.6,
+          breakpoints: [0, 0.6, 1]
+        })
+      return modal.present();
+    },
   },
 }
 </script>
