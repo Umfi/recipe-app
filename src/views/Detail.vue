@@ -16,7 +16,7 @@
                     </ion-button>
                 </div>
 
-                <div class="recipe-rating">
+                <div class="recipe-rating" @click="showRateModal">
                     <ion-icon :icon="recipe.rating >= 1 ? star : starOutline" color="primary"></ion-icon>
                     <ion-icon :icon="recipe.rating >= 2 ? star : starOutline" color="primary"></ion-icon>
                     <ion-icon :icon="recipe.rating >= 3 ? star : starOutline" color="primary"></ion-icon>
@@ -67,8 +67,9 @@
 </template>
 
 <script lang="ts">
-import { IonContent, IonPage, IonImg, IonIcon, IonButton, IonItem, IonLabel, IonChip, IonListHeader, IonList, IonCol } from '@ionic/vue';
+import { IonContent, IonPage, IonImg, IonIcon, IonButton, IonItem, IonLabel, IonChip, IonListHeader, IonList, IonCol, modalController } from '@ionic/vue';
 import { arrowBack, heartOutline, heart, timeOutline, star, starOutline, statsChartOutline, personOutline } from 'ionicons/icons';
+import RateModal from './RateModal.vue';
 
 
 export default {
@@ -98,7 +99,15 @@ export default {
     };
   },
   methods: {
-    
+     async showRateModal() {
+      const modal = await modalController
+        .create({
+          component: RateModal,
+          initialBreakpoint: 0.4,
+          breakpoints: [0, 0.4]
+        })
+      return modal.present();
+    },
   }
 }
 </script>
@@ -155,6 +164,7 @@ export default {
     bottom: 45px;
     left: 20px;
     color: white;
+    z-index: 11;
   }
 
 
