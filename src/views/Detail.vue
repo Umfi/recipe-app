@@ -11,7 +11,7 @@
                     </ion-button>
                 </div>
                 <div class="top-right">
-                    <ion-button fill="clear" color="light" class="recipe-header-btn">
+                    <ion-button fill="clear" color="light" class="recipe-header-btn" @click="toggleLike(recipe)">
                         <ion-icon slot="icon-only" :icon="recipe.liked ? heart : heartOutline" :color="recipe.liked ? 'primary' : 'light'"></ion-icon>
                     </ion-button>
                 </div>
@@ -70,7 +70,7 @@
 import { IonContent, IonPage, IonImg, IonIcon, IonButton, IonItem, IonLabel, IonChip, IonListHeader, IonList, IonCol, modalController } from '@ionic/vue';
 import { arrowBack, heartOutline, heart, timeOutline, star, starOutline, statsChartOutline, personOutline } from 'ionicons/icons';
 import RateModal from './RateModal.vue';
-
+import { Recipe } from '@/interfaces/Recipe';
 
 export default {
   name: 'Detail',
@@ -107,6 +107,9 @@ export default {
           breakpoints: [0, 0.4]
         })
       return modal.present();
+    },
+    toggleLike(recipe: Recipe) {
+      recipe.liked = !recipe.liked;
     },
   }
 }

@@ -26,7 +26,7 @@
                         </ion-row>
                     </ion-col>
                     <ion-col size="1">
-                        <ion-button fill="clear" color="dark" class="ion-no-padding">
+                        <ion-button fill="clear" color="dark" class="ion-no-padding" @click.stop="toggleLike(recipe)">
                             <ion-icon slot="icon-only" :icon="recipe.liked ? heart : heartOutline" :color="recipe.liked ? 'primary' : 'dark'"></ion-icon>
                         </ion-button>
                     </ion-col>
@@ -49,7 +49,7 @@ import {
 } from '@ionic/vue';
 
 import {  heartOutline, heart, timeOutline, star, starOutline, statsChartOutline } from 'ionicons/icons';
-
+import { Recipe } from '@/interfaces/Recipe';
 
 export default {
   name: 'RecipeListItem',
@@ -67,10 +67,15 @@ export default {
     IonCard
   },
   setup() {
-       return {
-           heartOutline, heart, timeOutline, star, starOutline, statsChartOutline
-       };
+    return {
+        heartOutline, heart, timeOutline, star, starOutline, statsChartOutline
+    };
    },
+  methods: {
+    toggleLike(recipe: Recipe) {
+      recipe.liked = !recipe.liked;
+    },
+  }
 }
 </script>
 
@@ -86,6 +91,7 @@ export default {
   .trending-drink-card {
     border-radius: 25px !important;
     overflow: hidden;
+    width: 100%;
   }
 
   .trending-drink-title {

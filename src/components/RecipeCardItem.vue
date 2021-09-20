@@ -4,7 +4,7 @@
             <ion-img :src="recipe.img" class="recommended-drink-image"></ion-img>
             <div class="recommended-drink-content">
                 <div class="top-right">
-                    <ion-button fill="clear" color="light" class="ion-no-padding">
+                    <ion-button fill="clear" color="light" class="ion-no-padding" @click.stop="toggleLike(recipe)">
                         <ion-icon slot="icon-only" :icon="recipe.liked ? heart : heartOutline" :color="recipe.liked ? 'primary' : 'light'"></ion-icon>
                     </ion-button>
                 </div>
@@ -25,6 +25,7 @@ import {
 } from '@ionic/vue';
 
 import {  heartOutline, heart } from 'ionicons/icons';
+import { Recipe } from '@/interfaces/Recipe';
 
 
 export default {
@@ -44,6 +45,11 @@ export default {
            heartOutline, heart
        };
    },
+   methods: {
+    toggleLike(recipe: Recipe) {
+      recipe.liked = !recipe.liked;
+    },
+  }
 }
 </script>
 
@@ -53,16 +59,16 @@ export default {
         height: 175px !important;
     }
 
-  .recommended-drink-container {
+    .recommended-drink-container {
         position: relative;
         text-align: center;
         color: white;
         height: 225px;
     }
 
-  .profile-wrapper .top-right {
-    display: none;
-  }
+    .profile-wrapper .top-right {
+        display: none;
+    }
 
     .top-right {
         position: absolute;
