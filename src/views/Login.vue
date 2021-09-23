@@ -24,13 +24,13 @@
               <ion-col size="12">
                 <ion-item fill="outline" shape="round">
                   <ion-label position="floating">E-Mail</ion-label>
-                  <ion-input></ion-input>
+                  <ion-input v-model="email" type="email"></ion-input>
                 </ion-item>
               </ion-col>
               <ion-col size="12">
                 <ion-item fill="outline" shape="round">
                   <ion-label position="floating">Password</ion-label>
-                  <ion-input></ion-input>
+                  <ion-input v-model="password" type="password"></ion-input>
                 </ion-item>
               </ion-col>
             </ion-row>
@@ -41,7 +41,8 @@
                   expand="block"
                   fill="solid"
                   shape="round"
-                  size="large">
+                  size="large"
+                  @click="login">
                   Login
                   </ion-button>
               </ion-col>
@@ -63,7 +64,7 @@
   </ion-page>
 </template>
 
-<script lang="ts">
+<script lang="js">
 import {
   IonContent,
   IonPage,
@@ -75,9 +76,13 @@ import {
   IonText,
   IonItem,
   IonIcon,
-  IonButton
+  IonButton,
+  loadingController,
+  toastController
 } from "@ionic/vue";
 import { close } from "ionicons/icons";
+
+import { login } from "@/service/AuthService.js";
 
 export default {
   name: "Login",
@@ -98,6 +103,47 @@ export default {
     return {
       close,
     };
+  },
+  data() {
+    return {
+      email: "",
+      password: "",
+    };
+  },
+  methods: {
+    async showToast(msg) {
+      const toast = await toastController.create({
+        message: msg,
+        duration: 2000,
+      });
+      toast.present();
+    },
+    async showLoading() {
+      const loading = await loadingController
+        .create({
+          message: 'Please wait...',
+        });
+      await loading.present();
+    },
+    async login() {
+      await this.showLoading();
+      
+      const email = this.email;
+      const password = this.password;
+
+      const loginSuccessful = await login({ email, password });
+      
+      loadingController.dismiss()
+      if (loginSuccessful) {
+          this.showToast("Login succesful!");
+          this.$router.push("/");
+          this.email = "";
+          this.password = "";
+      } else {
+          this.password = "";
+          this.showToast("Login failed!");
+      }  
+    },
   },
 };
 </script>

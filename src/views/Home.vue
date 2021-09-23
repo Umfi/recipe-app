@@ -9,10 +9,10 @@
         <ion-title color="primary">Cheeers!</ion-title>
         </ion-item>
         <ion-item slot="end" lines="none">
-            <ion-avatar @click="$router.push('/profile')" v-if="isLoggedIn">
+            <ion-avatar @click="$router.push('/profile')" v-if="userIsLoggedIn">
                 <img src="https://images-eu.ssl-images-amazon.com/images/I/81LiQ6Tlr%2BL.png">
             </ion-avatar>
-            <ion-avatar @click="$router.push('/login')" v-if="!isLoggedIn">
+            <ion-avatar @click="$router.push('/login')" v-if="!userIsLoggedIn">
                 <img src="/assets/images/anonym.png">
             </ion-avatar>
         </ion-item>
@@ -21,7 +21,7 @@
     
     <ion-content class="ion-padding-horizontal">
       <ion-grid>
-          <ion-row v-if="isLoggedIn">
+          <ion-row v-if="userIsLoggedIn">
             <h1>Welcome, <b>Olivia</b>!</h1>
           </ion-row>
           <ion-row>
@@ -56,7 +56,7 @@
   </ion-page>
 </template>
 
-<script lang="ts">
+<script lang="js">
 import { 
     IonContent, 
     IonHeader, 
@@ -78,6 +78,8 @@ import { filter, heartOutline, heart, timeOutline, star, starOutline, statsChart
 
 import RecipeListItem from "@/components/RecipeListItem.vue";
 import RecipeCardItem from "@/components/RecipeCardItem.vue";
+
+import { isLoggedIn } from "@/service/AuthService.js";
 
 export default {
   name: 'Home',
@@ -106,7 +108,7 @@ export default {
    },
    data() {
     return {
-      isLoggedIn: false,
+      userIsLoggedIn: false,
       recommended: [
           {
             id: 1,
@@ -150,6 +152,11 @@ export default {
           }
       ]
     };
+  },
+  ionViewWillEnter() {
+    isLoggedIn().then(loginState => {
+      this.userIsLoggedIn = loginState;
+    });
   },
 }
 </script>

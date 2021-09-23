@@ -23,7 +23,7 @@
                       <ion-icon :icon="lockClosed" class="ion-padding-end"></ion-icon>
                       <ion-label>Change Password</ion-label>
                     </ion-item>
-                    <ion-item lines="none">
+                    <ion-item lines="none" @click="logoutUser()">
                       <ion-icon :icon="logOut" class="ion-padding-end"></ion-icon>
                       <ion-label>Logout</ion-label>
                     </ion-item>
@@ -70,13 +70,14 @@
   </ion-page>
 </template>
 
-<script lang="ts">
+<script lang="js">
 import { IonContent,  IonPage, IonIcon, IonLabel, IonButton, IonText, IonCol, IonRow, IonPopover, IonList, IonItem, modalController, popoverController } from '@ionic/vue';
 import { arrowBack, logOut, settings, mail, lockClosed } from 'ionicons/icons';
 import RecipeCardItem from "@/components/RecipeCardItem.vue";
 
 import ChangeEmailModal from "./ChangeEmailModal.vue"
 import ChangePasswordModal from './ChangePasswordModal.vue';
+import { logout } from "@/service/AuthService.js";
 
 export default {
   name: 'Profile',
@@ -166,6 +167,18 @@ export default {
         })
       return modal.present();
     },
+    logoutUser() {
+      popoverController.dismiss();
+
+      logout().then(() => {
+          this.$router.push("/");
+        }).catch((err) => {
+          console.log(err);
+          logout(true).then(() => {
+            this.$router.push("/");
+          })
+        });
+    }
   },
 }
 </script>
