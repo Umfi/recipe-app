@@ -22,15 +22,15 @@
           <ion-grid>
             <ion-row>
               <ion-col size="12">
-                <ion-item fill="outline" shape="round">
+                <ion-item fill="outline" shape="round" :class="invalidEmail ? 'invalid' : ''">
                   <ion-label position="floating">E-Mail</ion-label>
-                  <ion-input v-model="email" type="email"></ion-input>
+                  <ion-input v-model="email" type="email" inputmode="email" @ionBlur="invalidEmail = false"></ion-input>
                 </ion-item>
               </ion-col>
               <ion-col size="12">
-                <ion-item fill="outline" shape="round">
+                <ion-item fill="outline" shape="round" :class="invalidPassword ? 'invalid' : ''">
                   <ion-label position="floating">Password</ion-label>
-                  <ion-input v-model="password" type="password"></ion-input>
+                  <ion-input v-model="password" type="password" @ionBlur="invalidPassword = false"></ion-input>
                 </ion-item>
               </ion-col>
             </ion-row>
@@ -42,6 +42,7 @@
                   fill="solid"
                   shape="round"
                   size="large"
+                  :disabled="isSending"
                   @click="login">
                   Login
                   </ion-button>
@@ -108,6 +109,9 @@ export default {
     return {
       email: "",
       password: "",
+      isSending: false,
+      invalidEmail: false,
+      invalidPassword: false
     };
   },
   methods: {
@@ -119,30 +123,70 @@ export default {
       toast.present();
     },
     async showLoading() {
+      this.isSending = true;
       const loading = await loadingController
         .create({
           message: 'Please wait...',
         });
       await loading.present();
     },
-    async login() {
-      await this.showLoading();
-      
-      const email = this.email;
-      const password = this.password;
-
-      const loginSuccessful = await login({ email, password });
-      
+    hideLoading() {
+      this.isSending = false;
       loadingController.dismiss()
-      if (loginSuccessful) {
-          this.showToast("Login succesful!");
-          this.$router.push("/");
-          this.email = "";
-          this.password = "";
-      } else {
-          this.password = "";
-          this.showToast("Login failed!");
-      }  
+    },
+    isEmailValid() {
+      const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      if (this.email == null || this.email == "" || !this.email.trim()) {
+        this.showToast("E-Mail is required");
+        return false;
+      } else if (!re.test(this.email)) {
+        this.showToast("E-Mail is invalid");
+        return false;
+      }
+      return true;
+    },
+    isPasswordValid() {
+      if (this.password == null || this.password == "" || !this.password.trim()) {
+        this.showToast("Password is required");
+        return false;
+      } else if (this.password.length < 6) {
+        this.showToast("Password is too short (Min 6 chars)");
+        return false;
+      }
+      return true;
+    },
+    async login() {
+      if (!this.isSending) {
+        this.invalidEmail = false;
+        this.invalidPassword = false;
+        
+        const email = this.email;
+        const password = this.password;
+
+        if (!this.isEmailValid()) {
+          this.invalidEmail = true;
+          return;
+        }
+
+        if (!this.isPasswordValid()) {
+          this.invalidPassword = true;
+          return;
+        }
+
+        await this.showLoading();
+        const loginSuccessful = await login({ email, password });
+        this.hideLoading();
+
+        if (loginSuccessful) {
+            this.showToast("Login succesful!");
+            this.$router.push("/");
+            this.email = "";
+            this.password = "";
+        } else {
+            this.password = "";
+            this.showToast("Login failed!");
+        }  
+      }
     },
   },
 };

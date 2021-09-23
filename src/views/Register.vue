@@ -19,27 +19,27 @@
           <ion-grid>
             <ion-row>
               <ion-col size="12">
-                <ion-item fill="outline" shape="round">
+                <ion-item fill="outline" shape="round" :class="invalidName ? 'invalid' : ''">
                   <ion-label position="floating">Name</ion-label>
-                  <ion-input></ion-input>
+                  <ion-input v-model="name" inputmode="text" @ionBlur="invalidName = false"></ion-input>
                 </ion-item>
               </ion-col>
               <ion-col size="12">
-                <ion-item fill="outline" shape="round">
+                <ion-item fill="outline" shape="round" :class="invalidEmail ? 'invalid' : ''">
                   <ion-label position="floating">E-Mail</ion-label>
-                  <ion-input></ion-input>
+                  <ion-input v-model="email" type="email" inputmode="email" @ionBlur="invalidEmail = false"></ion-input>
                 </ion-item>
               </ion-col>
               <ion-col size="12">
-                <ion-item fill="outline" shape="round">
+                <ion-item fill="outline" shape="round" :class="invalidPassword ? 'invalid' : ''">
                   <ion-label position="floating">Password</ion-label>
-                  <ion-input type="password"></ion-input>
+                  <ion-input v-model="password" type="password" @ionBlur="invalidPassword = false"></ion-input>
                 </ion-item>
               </ion-col>
               <ion-col size="12">
-                <ion-item fill="outline" shape="round">
+                <ion-item fill="outline" shape="round" :class="invalidPasswordConfirm ? 'invalid' : ''">
                   <ion-label position="floating">Repeat Password</ion-label>
-                  <ion-input type="password"></ion-input>
+                  <ion-input v-model="passwordConfirm" type="password" @ionBlur="invalidPasswordConfirm = false"></ion-input>
                 </ion-item>
               </ion-col>
             </ion-row>
@@ -50,7 +50,9 @@
                   expand="block"
                   fill="solid"
                   shape="round"
-                  size="large">
+                  size="large"
+                  :disabled="isSending"
+                  @click="register">
                   Register
                 </ion-button>
               </ion-col>
@@ -72,7 +74,7 @@
   </ion-page>
 </template>
 
-<script lang="ts">
+<script lang="js">
 import {
   IonContent,
   IonPage,
@@ -84,9 +86,14 @@ import {
   IonText,
   IonItem,
   IonIcon,
-  IonButton
+  IonButton,
+  toastController,
+  loadingController
 } from "@ionic/vue";
 import { close } from "ionicons/icons";
+
+import { register } from "@/service/AuthService.js";
+
 
 export default {
   name: "Register",
@@ -107,6 +114,125 @@ export default {
     return {
       close,
     };
+  },
+  data() {
+    return {
+      name: "",
+      email: "",
+      password: "",
+      passwordConfirm: "",
+      isSending: false,
+      invalidName: false,
+      invalidEmail: false,
+      invalidPassword: false,
+      invalidPasswordConfirm: false
+    };
+  },
+  methods: {
+    async showToast(msg) {
+      const toast = await toastController.create({
+        message: msg,
+        duration: 2000,
+      });
+      toast.present();
+    },
+    async showLoading() {
+      this.isSending = true;
+      const loading = await loadingController
+        .create({
+          message: 'Please wait...',
+        });
+      await loading.present();
+    },
+    hideLoading() {
+      this.isSending = false;
+      loadingController.dismiss()
+    },
+    isNameValid() {
+      if (this.name == null || this.name == "" || !this.name.trim()) {
+        this.showToast("Name is required");
+        return false;
+      }
+      return true;
+    },
+    isEmailValid() {
+      const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      if (this.email == null || this.email == "" || !this.email.trim()) {
+        this.showToast("E-Mail is required");
+        return false;
+      } else if (!re.test(this.email)) {
+        this.showToast("E-Mail is invalid");
+        return false;
+      }
+      return true;
+    },
+    isPasswordValid() {
+      if (this.password == null || this.password == "" || !this.password.trim()) {
+        this.showToast("Password is required");
+        return false;
+      } else if (this.password.length < 6) {
+        this.showToast("Password is too short (Min 6 chars)");
+        return false;
+      }
+      return true;
+    },
+    isPasswordConfirmValid() {
+      if (this.passwordConfirm != this.password) {
+        this.showToast("Confirm Password does not match with password");
+        return false;
+      }
+      return true;
+    },
+    async register() {
+      if (!this.isSending) {
+        this.invalidName = false;
+        this.invalidEmail = false;
+        this.invalidPassword = false;
+        this.invalidPasswordConfirm = false;
+        
+        const name = this.name;
+        const email = this.email;
+        const password = this.password;
+        const passwordConfirmation = this.passwordConfirm;
+
+        if (!this.isNameValid()) {
+          this.invalidName = true;
+          return;
+        }
+
+        if (!this.isEmailValid()) {
+          this.invalidEmail = true;
+          return;
+        }
+
+        if (!this.isPasswordValid()) {
+          this.invalidPassword = true;
+          return;
+        }
+
+        if (!this.isPasswordConfirmValid()) {
+          this.invalidPasswordConfirm = true;
+          return;
+        }
+
+        await this.showLoading();
+        const registerSuccessful = await register({ name, email, password, 'password_confirmation' :  passwordConfirmation });
+        this.hideLoading();
+
+        if (registerSuccessful) {
+            this.showToast("Registration succesful!");
+            this.$router.push("/login");
+            this.name = "";
+            this.email = "";
+            this.password = "";
+            this.passwordConfirm = "";
+        } else {
+            this.password = "";
+            this.passwordConfirm = "";
+            this.showToast("Registration failed!");
+        }  
+      }
+    },
   },
 };
 </script>
