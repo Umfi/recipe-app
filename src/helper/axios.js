@@ -1,6 +1,6 @@
 import axios from 'axios'
 import router from '../router/index.ts'
-import { logout, refreshToken } from "../service/AuthService.js";
+import AuthService from "@/service/AuthService";
 import { get } from "./storage.js";
 
 const $axios = axios.create();
@@ -46,7 +46,7 @@ $axios.interceptors.response.use(
         if (err.response.status === 401 && !originalRequest._retry) {
 
             if (originalRequest.url.includes("refresh") || originalRequest.url.includes("logout") || originalRequest.url.includes("login")) {
-                logout(true).then(() => {
+                AuthService.logout(true).then(() => {
                      router.push('/login');
                  })
              } else {      
@@ -66,7 +66,7 @@ $axios.interceptors.response.use(
 
                 return new Promise(function(resolve, reject) {
 
-                    refreshToken().then(async (res) => {
+                    AuthService.refreshToken().then(async (res) => {
                         if (res) {
                             // Perform previous request again
                             const accessToken = await get("access_token");
@@ -77,7 +77,7 @@ $axios.interceptors.response.use(
                         } else {
                             processQueue(err, null);
 
-                            logout().then(() => {
+                            AuthService.logout().then(() => {
                                 router.push('/login');
                             })
                             reject(err)

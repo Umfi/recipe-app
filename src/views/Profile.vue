@@ -77,7 +77,7 @@ import RecipeCardItem from "@/components/RecipeCardItem.vue";
 
 import ChangeEmailModal from "./ChangeEmailModal.vue"
 import ChangePasswordModal from './ChangePasswordModal.vue';
-import { logout } from "@/service/AuthService.js";
+import AuthService from "@/service/AuthService";
 
 export default {
   name: 'Profile',
@@ -170,11 +170,11 @@ export default {
     logoutUser() {
       popoverController.dismiss();
 
-      logout().then(() => {
+      AuthService.logout().then(() => {
           this.$router.push("/");
         }).catch((err) => {
           console.log(err);
-          logout(true).then(() => {
+          AuthService.logout(true).then(() => {
             this.$router.push("/");
           })
         });

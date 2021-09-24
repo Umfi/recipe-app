@@ -79,7 +79,7 @@ import { filter, heartOutline, heart, timeOutline, star, starOutline, statsChart
 import RecipeListItem from "@/components/RecipeListItem.vue";
 import RecipeCardItem from "@/components/RecipeCardItem.vue";
 
-import { isLoggedIn } from "@/service/AuthService.js";
+import AuthService from "@/service/AuthService";
 
 export default {
   name: 'Home',
@@ -154,7 +154,7 @@ export default {
     };
   },
   ionViewWillEnter() {
-    isLoggedIn().then(loginState => {
+    AuthService.isLoggedIn().then(loginState => {
       this.userIsLoggedIn = loginState;
     });
   },

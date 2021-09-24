@@ -86,14 +86,13 @@ import {
   IonText,
   IonItem,
   IonIcon,
-  IonButton,
-  toastController,
-  loadingController
+  IonButton
 } from "@ionic/vue";
 import { close } from "ionicons/icons";
 
-import { register } from "@/service/AuthService.js";
+import AuthService from "@/service/AuthService";
 
+import Base from "@/components/Base.vue";
 
 export default {
   name: "Register",
@@ -110,6 +109,7 @@ export default {
     IonIcon,
     IonButton
   },
+  extends: Base,
   setup() {
     return {
       close,
@@ -121,7 +121,6 @@ export default {
       email: "",
       password: "",
       passwordConfirm: "",
-      isSending: false,
       invalidName: false,
       invalidEmail: false,
       invalidPassword: false,
@@ -129,25 +128,6 @@ export default {
     };
   },
   methods: {
-    async showToast(msg) {
-      const toast = await toastController.create({
-        message: msg,
-        duration: 2000,
-      });
-      toast.present();
-    },
-    async showLoading() {
-      this.isSending = true;
-      const loading = await loadingController
-        .create({
-          message: 'Please wait...',
-        });
-      await loading.present();
-    },
-    hideLoading() {
-      this.isSending = false;
-      loadingController.dismiss()
-    },
     isNameValid() {
       if (this.name == null || this.name == "" || !this.name.trim()) {
         this.showToast("Name is required");
@@ -161,7 +141,7 @@ export default {
         this.showToast("E-Mail is required");
         return false;
       } else if (!re.test(this.email)) {
-        this.showToast("E-Mail is invalid");
+        this.showToast("E-Mail is invalid", "danger");
         return false;
       }
       return true;
@@ -171,7 +151,7 @@ export default {
         this.showToast("Password is required");
         return false;
       } else if (this.password.length < 6) {
-        this.showToast("Password is too short (Min 6 chars)");
+        this.showToast("Password is too short (Min 6 chars)", "danger");
         return false;
       }
       return true;
@@ -216,11 +196,11 @@ export default {
         }
 
         await this.showLoading();
-        const registerSuccessful = await register({ name, email, password, 'password_confirmation' :  passwordConfirmation });
+        const registerSuccessful = await AuthService.register({ name, email, password, 'password_confirmation' :  passwordConfirmation });
         this.hideLoading();
 
         if (registerSuccessful) {
-            this.showToast("Registration succesful!");
+            this.showToast("Registration succesful!", "success");
             this.$router.push("/login");
             this.name = "";
             this.email = "";
@@ -229,7 +209,7 @@ export default {
         } else {
             this.password = "";
             this.passwordConfirm = "";
-            this.showToast("Registration failed!");
+            this.showToast("Registration failed!", "danger");
         }  
       }
     },
