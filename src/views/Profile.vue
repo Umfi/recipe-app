@@ -73,6 +73,10 @@
 <script lang="js">
 import { IonContent,  IonPage, IonIcon, IonLabel, IonButton, IonText, IonCol, IonRow, IonPopover, IonList, IonItem, modalController, popoverController } from '@ionic/vue';
 import { arrowBack, logOut, settings, mail, lockClosed } from 'ionicons/icons';
+
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+
 import RecipeCardItem from "@/components/RecipeCardItem.vue";
 import Base from "@/components/Base.vue";
 
@@ -99,8 +103,12 @@ export default {
   },
   extends: Base,
   setup() {
+    const store = useStore()
+
     return {
-        arrowBack, logOut, settings, mail, lockClosed
+      loggedIn: computed(() => store.state.userIsLoggedIn),
+      user: computed(() => store.state.user),
+      store, arrowBack, logOut, settings, mail, lockClosed
     };
   },
   data() {
@@ -110,8 +118,6 @@ export default {
     };
   },
   ionViewWillEnter() {
-    this.checkSession();
-
     RecipeService.getAllFromUser().then(recipes => {
       this.createdRecipes = recipes;
     }); 
@@ -145,10 +151,12 @@ export default {
       popoverController.dismiss();
 
       AuthService.logout().then(() => {
+          this.store.commit('logout');
           this.$router.replace("/");
         }).catch((err) => {
           console.log(err);
           AuthService.logout(true).then(() => {
+            this.store.commit('logout');
             this.$router.replace("/");
           })
         });

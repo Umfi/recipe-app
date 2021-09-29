@@ -94,8 +94,6 @@ export default {
     };
   },
   ionViewWillEnter() {
-    this.checkSession();
-
     RecipeService.get(this.id).then(recipe => {
       if (recipe != null) {
         this.recipe = recipe;

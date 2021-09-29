@@ -19,7 +19,7 @@ class AuthService {
             .then(resp => {
                 set("access_token", resp.data.access_token)
                 set("user", resp.data.user)
-                return true;
+                return resp.data;
             }).catch(err => {
                 console.log(err);
                 remove("access_token")

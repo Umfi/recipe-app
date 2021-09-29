@@ -9,10 +9,10 @@
         <ion-title color="primary">Cheeers!</ion-title>
         </ion-item>
         <ion-item slot="end" lines="none">
-            <ion-avatar @click="$router.push('/profile')" v-if="userIsLoggedIn">
+            <ion-avatar @click="$router.push('/profile')" v-if="loggedIn">
                 <img src="https://images-eu.ssl-images-amazon.com/images/I/81LiQ6Tlr%2BL.png">
             </ion-avatar>
-            <ion-avatar @click="$router.push('/login')" v-if="!userIsLoggedIn">
+            <ion-avatar @click="$router.push('/login')" v-if="!loggedIn">
                 <img src="/assets/images/anonym.png">
             </ion-avatar>
         </ion-item>
@@ -21,7 +21,7 @@
     
     <ion-content class="ion-padding-horizontal">
       <ion-grid>
-          <ion-row v-if="userIsLoggedIn">
+          <ion-row v-if="loggedIn">
             <h1>Welcome, <b>{{ user.name }}</b>!</h1>
           </ion-row>
           <ion-row>
@@ -82,6 +82,10 @@ import RecipeCardItem from "@/components/RecipeCardItem.vue";
 import RecipeService from "@/service/RecipeService";
 import Base from "@/components/Base.vue";
 
+
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+
 export default {
   name: 'Home',
   components: {
@@ -104,7 +108,11 @@ export default {
   },
   extends: Base,
   setup() {
+    const store = useStore()
+
     return {
+        loggedIn: computed(() => store.state.userIsLoggedIn),
+        user: computed(() => store.state.user),
         filter, heartOutline, heart, timeOutline, star, starOutline, statsChartOutline
     };
   },
@@ -115,9 +123,6 @@ export default {
     };
   },
   ionViewWillEnter() {
-  
-    this.checkSession();
-
     RecipeService.getRecommended().then(recipes => {
       this.recommendedRecipes = recipes;
     }); 

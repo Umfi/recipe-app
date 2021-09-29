@@ -83,6 +83,7 @@ import { close } from "ionicons/icons";
 
 import AuthService from "@/service/AuthService";
 
+import { useStore } from 'vuex';
 import Base from "@/components/Base.vue";
 
 export default {
@@ -102,8 +103,10 @@ export default {
   },
   extends: Base,
   setup() {
+    const store = useStore()
+
     return {
-      close
+      store, close
     };
   },
   data() {
@@ -159,6 +162,8 @@ export default {
         this.hideLoading();
 
         if (loginSuccessful) {
+            const user = loginSuccessful.user;
+            this.store.commit('login', { user });
             this.showToast("Login succesful!", "success");
             this.$router.push("/");
             this.email = "";
