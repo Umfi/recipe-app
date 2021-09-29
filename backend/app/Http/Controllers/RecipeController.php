@@ -56,6 +56,34 @@ class RecipeController extends Controller
     }
 
     /**
+     * List top 4 trending recipes
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function trending(): \Illuminate\Http\JsonResponse
+    {
+        return response()->json(
+            Recipe::with(['ingredients','instructions', 'creator', 'favorites', 'ratings']) 
+                ->take(4)
+                ->get()
+        );
+    }
+
+    /**
+     * List recommended recipes
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function recommended(): \Illuminate\Http\JsonResponse
+    {
+        // TODO: Implement recommendations 
+
+        return response()->json(
+            Recipe::with(['ingredients','instructions', 'creator', 'favorites', 'ratings']) 
+                ->take(3)
+                ->get()
+        );
+    }
+
+    /**
      * Get a recipe
      * @param $id
      * @return \Illuminate\Http\JsonResponse

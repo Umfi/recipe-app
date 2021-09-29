@@ -28,6 +28,9 @@ $router->group(['prefix' => 'api'], function () use ($router)
 
     $router->get('created-recipes', 'RecipeController@created');
     $router->get('liked-recipes', 'RecipeController@liked');
+
+    $router->get('trending-recipes', 'RecipeController@trending');
+    $router->get('recommended-recipes', 'RecipeController@recommended');
 });
 
 
