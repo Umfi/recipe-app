@@ -22,6 +22,12 @@ $router->group(['prefix' => 'api'], function () use ($router)
 {
     $router->post('register', 'AuthController@register');
     $router->post('login', 'AuthController@login');
+
+    $router->get('recipes', 'RecipeController@all');
+    $router->get('recipe/{id}', 'RecipeController@get');
+
+    $router->get('created-recipes', 'RecipeController@created');
+    $router->get('liked-recipes', 'RecipeController@liked');
 });
 
 
@@ -31,3 +37,4 @@ $router->group(['middleware' => 'auth', 'prefix' => 'api'], function ($router)
     $router->post('logout', 'AuthController@logout');
     $router->post('refresh', 'AuthController@refresh');
 });
+
