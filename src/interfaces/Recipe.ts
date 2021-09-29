@@ -6,7 +6,7 @@ export interface Recipe {
     time: number;
     difficulty: string;
     rating: number;
-    votes: number;
+    totalRatings: number;
     calories: number;
     amount: number;
 }

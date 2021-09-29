@@ -37,7 +37,7 @@
         </div>
         <div class="layout-card-body">
           <div class="user-meta ion-text-center">
-            <h3 class="usernmae">Olivia </h3>
+            <h3 class="usernmae">{{ user.name }}</h3>
             <h5 class="rank">Newbie</h5>
           </div>
 
@@ -50,7 +50,7 @@
               </ion-col>
           </ion-row>
           <ion-row class="horizontal-slider profile-wrapper">
-            <recipe-card-item v-for="recipe in recommended" :key="recipe.id" :recipe="recipe" :size="5"></recipe-card-item>
+            <recipe-card-item v-for="recipe in likedRecipes" :key="recipe.id" :recipe="recipe" :size="5"></recipe-card-item>
           </ion-row>
 
           <ion-row>
@@ -62,7 +62,7 @@
             </ion-col>
           </ion-row>
           <ion-row class="horizontal-slider profile-wrapper">
-            <recipe-card-item v-for="recipe in recommended" :key="recipe.id" :recipe="recipe" :size="5"></recipe-card-item>
+            <recipe-card-item v-for="recipe in createdRecipes" :key="recipe.id" :recipe="recipe" :size="5"></recipe-card-item>
           </ion-row>
         </div>
       </div>
@@ -74,10 +74,12 @@
 import { IonContent,  IonPage, IonIcon, IonLabel, IonButton, IonText, IonCol, IonRow, IonPopover, IonList, IonItem, modalController, popoverController } from '@ionic/vue';
 import { arrowBack, logOut, settings, mail, lockClosed } from 'ionicons/icons';
 import RecipeCardItem from "@/components/RecipeCardItem.vue";
+import Base from "@/components/Base.vue";
 
 import ChangeEmailModal from "./ChangeEmailModal.vue"
 import ChangePasswordModal from './ChangePasswordModal.vue';
 import AuthService from "@/service/AuthService";
+import RecipeService from "@/service/RecipeService";
 
 export default {
   name: 'Profile',
@@ -95,56 +97,28 @@ export default {
     IonItem,
     RecipeCardItem
   },
+  extends: Base,
   setup() {
-       return {
-           arrowBack, logOut, settings, mail, lockClosed
-       };
+    return {
+        arrowBack, logOut, settings, mail, lockClosed
+    };
   },
   data() {
     return {
-      recommended: [
-          {
-            id: 1,
-            name: "Demo Drink 1",
-            img: "https://cocktailbart.de/wp-content/uploads/2017/06/Sex-on-the-beach-cocktail-2.jpg",
-            liked: true,
-            time: 5,
-            difficulty: 'easy',
-            rating: 3,
-            votes: 12
-          },
-          {
-            id: 2,
-            name: "Demo Drink 2",
-            img: "https://cocktailbart.de/wp-content/uploads/2021/05/Blue-Hawaii-Cocktail-2.jpg",
-            liked: false,
-            time: 10,
-            difficulty: 'easy',
-            rating: 4,
-            votes: 11
-          },
-          {
-            id: 3,
-            name: "Demo Drink 3",
-            img: "https://trinkreif.de/wp-content/uploads/tequila-sunrise-cocktail-rezept.jpg",
-            liked: false,
-            time: 20,
-            difficulty: 'hard',
-            rating: 5,
-            votes: 32
-          },
-          {
-            id: 4,
-            name: "Demo Drink 4",
-            img: "https://www.gourmet-magazin.de/fileadmin/user_upload/rezepte/drinks/cocktails/pink-lady-7.jpg",
-            liked: true,
-            time: 15,
-            difficulty: 'medium',
-            rating: 0,
-            votes: 2
-          }
-      ]
+      createdRecipes: [],
+      likedRecipes: []
     };
+  },
+  ionViewWillEnter() {
+    this.checkSession();
+
+    RecipeService.getAllFromUser().then(recipes => {
+      this.createdRecipes = recipes;
+    }); 
+    
+    RecipeService.getAllLikedFromUser().then(recipes => {
+      this.likedRecipes = recipes;
+    });  
   },
   methods: {
     async showChangeEmailModal() {
@@ -171,11 +145,11 @@ export default {
       popoverController.dismiss();
 
       AuthService.logout().then(() => {
-          this.$router.push("/");
+          this.$router.replace("/");
         }).catch((err) => {
           console.log(err);
           AuthService.logout(true).then(() => {
-            this.$router.push("/");
+            this.$router.replace("/");
           })
         });
     }

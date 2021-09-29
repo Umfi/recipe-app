@@ -4,7 +4,7 @@
             <ion-grid class="ion-no-padding">
                 <ion-row>
                     <ion-col size="5" class="ion-padding-end">
-                        <ion-img :src="recipe.img" class="trending-drink-image"></ion-img>
+                        <ion-img :src="recipe.image" class="trending-drink-image"></ion-img>
                     </ion-col>
                     <ion-col size="6" class="ion-align-self-center">
                         <ion-row>
@@ -13,15 +13,15 @@
                             <ion-icon :icon="recipe.rating >= 3 ? star : starOutline" color="primary"></ion-icon>
                             <ion-icon :icon="recipe.rating >= 4 ? star : starOutline" color="primary"></ion-icon>
                             <ion-icon :icon="recipe.rating >= 5 ? star : starOutline" color="primary"></ion-icon>
-                            <span class="trending-drink-votes ion-align-self-end">&nbsp; {{recipe.votes}} votes</span>
+                            <span class="trending-drink-votes ion-align-self-end">&nbsp; {{recipe.totalRatings}} votes</span>
                         </ion-row>
                         <ion-row class="trending-drink-title">{{recipe.name}}</ion-row>
                         <ion-row class="ion-padding-top">
                         <ion-col>
-                            <ion-icon :icon="timeOutline"></ion-icon> {{recipe.time}} min
+                            <ion-icon :icon="timeOutline" class="center-icon"></ion-icon> {{recipe.time}} min
                         </ion-col>
                         <ion-col>
-                            <ion-icon :icon="statsChartOutline"></ion-icon> {{recipe.difficulty}}
+                            <ion-icon :icon="statsChartOutline" class="center-icon"></ion-icon> {{recipe.difficulty}}
                         </ion-col>
                         </ion-row>
                     </ion-col>
@@ -102,5 +102,9 @@ export default {
   .trending-drink-votes {
     color: darkgrey;
     font-size: 13px;
+  }
+
+  .center-icon {
+     vertical-align: -2px;
   }
 </style>

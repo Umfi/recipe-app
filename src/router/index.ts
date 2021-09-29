@@ -20,7 +20,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/trending',
-    component: () => import ('../views/DrinkList.vue'),
+    component: () => import ('../views/RecipeList.vue'),
     props: { mode: 'trending' }
   },
   {
@@ -29,12 +29,12 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/likedrecipes',
-    component: () => import ('../views/DrinkList.vue'),
+    component: () => import ('../views/RecipeList.vue'),
     props: { mode: 'liked' }
   },
   {
     path: '/myrecipes',
-    component: () => import ('../views/DrinkList.vue'),
+    component: () => import ('../views/RecipeList.vue'),
     props: { mode: 'my' }
   },
 ]

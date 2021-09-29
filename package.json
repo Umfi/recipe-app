@@ -19,6 +19,7 @@
     "@ionic/vue": "^6.0.0-beta.6",
     "@ionic/vue-router": "^6.0.0-beta.6",
     "axios": "^0.21.4",
+    "axios-cache-adapter": "^2.7.3",
     "core-js": "^3.6.5",
     "vue": "^3.2.1",
     "vue-router": "^4.0.0-0"

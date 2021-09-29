@@ -22,7 +22,7 @@
     <ion-content class="ion-padding-horizontal">
       <ion-grid>
           <ion-row v-if="userIsLoggedIn">
-            <h1>Welcome, <b>Olivia</b>!</h1>
+            <h1>Welcome, <b>{{ user.name }}</b>!</h1>
           </ion-row>
           <ion-row>
               <ion-col size="9" class="ion-no-padding">
@@ -38,7 +38,7 @@
               <h2>Recommended for you</h2>
           </ion-row>
           <ion-row class="horizontal-slider">
-            <recipe-card-item v-for="recipe in recommended" :key="recipe.id" :recipe="recipe" :size="7"></recipe-card-item>
+            <recipe-card-item v-for="recipe in recommendedRecipes" :key="recipe.id" :recipe="recipe" :size="7"></recipe-card-item>
           </ion-row>
           <ion-row>
             <ion-col>
@@ -49,7 +49,7 @@
             </ion-col>
           </ion-row>
           <ion-row>
-            <recipe-list-item v-for="recipe in recommended" :key="recipe.id" :recipe="recipe"></recipe-list-item>
+            <recipe-list-item v-for="recipe in trendingRecipes" :key="recipe.id" :recipe="recipe"></recipe-list-item>
           </ion-row>
        </ion-grid>
     </ion-content>
@@ -79,7 +79,8 @@ import { filter, heartOutline, heart, timeOutline, star, starOutline, statsChart
 import RecipeListItem from "@/components/RecipeListItem.vue";
 import RecipeCardItem from "@/components/RecipeCardItem.vue";
 
-import AuthService from "@/service/AuthService";
+import RecipeService from "@/service/RecipeService";
+import Base from "@/components/Base.vue";
 
 export default {
   name: 'Home',
@@ -101,62 +102,29 @@ export default {
     RecipeListItem,
     RecipeCardItem
   },
+  extends: Base,
   setup() {
-       return {
-           filter, heartOutline, heart, timeOutline, star, starOutline, statsChartOutline
-       };
-   },
-   data() {
     return {
-      userIsLoggedIn: false,
-      recommended: [
-          {
-            id: 1,
-            name: "Demo Drink 1",
-            img: "https://cocktailbart.de/wp-content/uploads/2017/06/Sex-on-the-beach-cocktail-2.jpg",
-            liked: true,
-            time: 5,
-            difficulty: 'easy',
-            rating: 3,
-            votes: 12
-          },
-          {
-            id: 2,
-            name: "Demo Drink 2",
-            img: "https://cocktailbart.de/wp-content/uploads/2021/05/Blue-Hawaii-Cocktail-2.jpg",
-            liked: false,
-            time: 10,
-            difficulty: 'easy',
-            rating: 4,
-            votes: 11
-          },
-          {
-            id: 3,
-            name: "Demo Drink 3",
-            img: "https://trinkreif.de/wp-content/uploads/tequila-sunrise-cocktail-rezept.jpg",
-            liked: false,
-            time: 20,
-            difficulty: 'hard',
-            rating: 5,
-            votes: 32
-          },
-          {
-            id: 4,
-            name: "Demo Drink 4",
-            img: "https://www.gourmet-magazin.de/fileadmin/user_upload/rezepte/drinks/cocktails/pink-lady-7.jpg",
-            liked: true,
-            time: 15,
-            difficulty: 'medium',
-            rating: 0,
-            votes: 2
-          }
-      ]
+        filter, heartOutline, heart, timeOutline, star, starOutline, statsChartOutline
+    };
+  },
+  data() {
+    return {
+      trendingRecipes: [],
+      recommendedRecipes: []
     };
   },
   ionViewWillEnter() {
-    AuthService.isLoggedIn().then(loginState => {
-      this.userIsLoggedIn = loginState;
-    });
+  
+    this.checkSession();
+
+    RecipeService.getRecommended().then(recipes => {
+      this.recommendedRecipes = recipes;
+    }); 
+
+    RecipeService.getTrending().then(recipes => {
+      this.trendingRecipes = recipes;
+    });  
   },
 }
 </script>

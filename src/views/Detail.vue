@@ -1,9 +1,9 @@
 <template>
   <ion-page>
-    <ion-content :fullscreen="true">
+    <ion-content :fullscreen="true" v-if="recipe != null">
       <ion-item class="ion-no-padding ion-no-border" style="--inner-padding-end: 0;" lines="none">
         <div class="recipe-container">
-            <ion-img :src="recipe.img" class="recipe-image"></ion-img>
+            <ion-img :src="recipe.image" class="recipe-image"></ion-img>
             <div class="recipe-content">
                 <div class="top-left">
                     <ion-button color="primary" shape="round" class="recipe-header-btn" @click="$router.go(-1)">
@@ -44,58 +44,67 @@
           <ion-label>{{ recipe.amount }}</ion-label>
         </ion-chip>
         <ion-chip outline>
+          <ion-icon :icon="flameOutline"></ion-icon> 
           <ion-label>{{ recipe.calories }} kcal</ion-label>
         </ion-chip>
       </ion-item>
       <ion-list>
         <ion-list-header><h3>Ingredients</h3></ion-list-header>
-        <ion-item><ion-col size="3">20 ml</ion-col><ion-col>Gin</ion-col></ion-item>
-        <ion-item><ion-col size="3">10 ml</ion-col><ion-col>Lemon Juice</ion-col></ion-item>
-        <ion-item><ion-col size="3">10 ml</ion-col><ion-col>Maple Syrup</ion-col></ion-item>
-        <ion-item><ion-col size="3">1</ion-col><ion-col>Egg white</ion-col></ion-item>
-        <ion-item><ion-col size="3">50 ml</ion-col><ion-col>Soda water</ion-col></ion-item>
+        <ion-item v-for="ingredient in recipe.ingredients" :key="ingredient.id">
+          <ion-col size="3">{{ ingredient.amount + ' ' + ingredient.unit}}</ion-col>
+          <ion-col>{{ ingredient.name }}</ion-col>
+        </ion-item>
       </ion-list>
       <ion-list>
         <ion-list-header><h3>Instructions</h3></ion-list-header>
-        <ion-item><ion-col size="1"><b>1</b></ion-col><ion-col>asd ad a</ion-col></ion-item>
-        <ion-item><ion-col size="1"><b>2</b></ion-col><ion-col>asd ad a</ion-col></ion-item>
-        <ion-item><ion-col size="1"><b>3</b></ion-col><ion-col>asd ad a</ion-col></ion-item>
-        <ion-item><ion-col size="1"><b>4</b></ion-col><ion-col>asd ad a</ion-col></ion-item>
+          <ion-item v-for="(instruction, index)  in recipe.instructions" :key="instruction.id">
+            <ion-col size="1"><b>{{ index + 1 }}</b></ion-col>
+            <ion-col>{{ instruction.instruction }}</ion-col>
+          </ion-item>
       </ion-list>
     </ion-content>
   </ion-page>
 </template>
 
-<script lang="ts">
+<script lang="js">
 import { IonContent, IonPage, IonImg, IonIcon, IonButton, IonItem, IonLabel, IonChip, IonListHeader, IonList, IonCol, modalController } from '@ionic/vue';
-import { arrowBack, heartOutline, heart, timeOutline, star, starOutline, statsChartOutline, personOutline } from 'ionicons/icons';
+import { arrowBack, heartOutline, heart, timeOutline, star, starOutline, statsChartOutline, personOutline, flameOutline } from 'ionicons/icons';
+
+import Base from "@/components/Base.vue";
+
+import { useRoute } from 'vue-router';
+
 import RateModal from './RateModal.vue';
-import { Recipe } from '@/interfaces/Recipe';
+
+import RecipeService from "@/service/RecipeService";
+
 
 export default {
   name: 'Detail',
   components: {
     IonContent, IonPage, IonImg, IonIcon, IonButton, IonItem, IonLabel, IonChip, IonListHeader, IonList, IonCol
   },
+  extends: Base,
   setup() {
-       return {
-           arrowBack, heartOutline, heart, timeOutline, star, starOutline, statsChartOutline, personOutline
-       };
+    const route = useRoute();
+    const { id } = route.params;
+
+    return {
+        id, arrowBack, heartOutline, heart, timeOutline, star, starOutline, statsChartOutline, personOutline, flameOutline
+    };
+  },
+  ionViewWillEnter() {
+    this.checkSession();
+
+    RecipeService.get(this.id).then(recipe => {
+      if (recipe != null) {
+        this.recipe = recipe;
+      }
+    }); 
   },
   data() {
     return {
-      recipe: {
-            id: 1,
-            name: "Demo Drink 1",
-            img: "https://cocktailbart.de/wp-content/uploads/2017/06/Sex-on-the-beach-cocktail-2.jpg",
-            liked: false,
-            time: 5,
-            difficulty: 'easy',
-            rating: 3,
-            votes: 12,
-            calories: 120,
-            amount: 2
-      },
+      recipe: null
     };
   },
   methods: {
@@ -108,7 +117,7 @@ export default {
         })
       return modal.present();
     },
-    toggleLike(recipe: Recipe) {
+    toggleLike(recipe) {
       recipe.liked = !recipe.liked;
     },
   }

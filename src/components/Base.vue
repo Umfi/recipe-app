@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="js">
 import { 
     toastController,
     loadingController
@@ -6,15 +6,34 @@ import {
 
 import { defineComponent } from 'vue';
 
+import AuthService from "@/service/AuthService";
+
 export default defineComponent({
   name: 'Base',
   data() {
     return {
+      user: {
+        name: ""
+      },
+      userIsLoggedIn: false,
       isSending: false
     };
   },
   methods: {
-    async showToast(text: string, color = '') {
+    checkSession() {
+      AuthService.isLoggedIn().then(user => {
+        if (user) {
+          this.userIsLoggedIn = true;
+          this.user = user;
+        } else {
+           this.userIsLoggedIn = false;
+           this.user = {
+              name: ""
+           };
+        }
+      });
+    },
+    async showToast(text, color = '') {
       const toast = await toastController.create({
         message: text,
         color: color,

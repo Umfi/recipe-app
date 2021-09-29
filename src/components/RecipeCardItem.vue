@@ -1,7 +1,7 @@
 <template>
     <ion-col :size="size">
         <div class="ion-activatable recommended-drink-container" @click="$router.push('/recipe/' + recipe.id)">
-            <ion-img :src="recipe.img" class="recommended-drink-image"></ion-img>
+            <ion-img :src="recipe.image" class="recommended-drink-image"></ion-img>
             <div class="recommended-drink-content">
                 <div class="top-right">
                     <ion-button fill="clear" color="light" class="ion-no-padding" @click.stop="toggleLike(recipe)">

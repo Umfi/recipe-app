@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonGrid, IonRow, IonCol, IonButton } from '@ionic/vue';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonGrid, IonRow, IonCol, IonButton, IonIcon } from '@ionic/vue';
 import { defineComponent } from 'vue';
 
 import { star, starOutline } from 'ionicons/icons';
@@ -73,6 +73,6 @@ export default defineComponent({
       rating: 0,
     }
   },
-  components: { IonContent, IonHeader, IonTitle, IonToolbar, IonGrid, IonRow, IonCol, IonButton }
+  components: { IonContent, IonHeader, IonTitle, IonToolbar, IonGrid, IonRow, IonCol, IonButton, IonIcon }
 });
 </script>

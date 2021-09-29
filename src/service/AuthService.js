@@ -5,8 +5,10 @@ import { config } from "../config.js"
 class AuthService {
     async isLoggedIn() {
         const accessToken = await get('access_token')
-        if (accessToken) {
-            return true;
+        const user = await get('user')
+
+        if (accessToken && user) {
+            return user;
         } else {
             return false;
         }
@@ -15,12 +17,13 @@ class AuthService {
     async login(user) {
         const data = await $axios({ url: config.API_BASE_URL + 'login', data: user, method: 'POST' })
             .then(resp => {
-                const accessToken = resp.data.access_token
-                set("access_token", accessToken)
+                set("access_token", resp.data.access_token)
+                set("user", resp.data.user)
                 return true;
             }).catch(err => {
                 console.log(err);
                 remove("access_token")
+                remove("user")
                 return false;
             })
 
@@ -43,10 +46,12 @@ class AuthService {
         if (!forceLogout) {
             await $axios({url: config.API_BASE_URL + 'logout', method: 'POST' }).then(() => {
                 remove("access_token")
+                remove("user")
                 delete $axios.defaults.headers.common['Authorization']
             })
         } else {
             remove("access_token")
+            remove("user")
             delete $axios.defaults.headers.common['Authorization']
         }
     }

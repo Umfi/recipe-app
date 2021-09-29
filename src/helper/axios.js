@@ -1,9 +1,18 @@
 import axios from 'axios'
+import { setupCache } from 'axios-cache-adapter'
 import router from '../router/index.ts'
 import AuthService from "@/service/AuthService";
 import { get } from "./storage.js";
 
-const $axios = axios.create();
+
+const cache = setupCache({
+    maxAge: 2 * 60 * 1000 // 2 minutes
+})
+
+  
+const $axios = axios.create({
+    adapter: cache.adapter
+});
 
 $axios.interceptors.request.use(
     async config => {
