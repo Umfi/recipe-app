@@ -5,7 +5,7 @@
         <div class="layout-card-header">
 
           <div class="btn-header-top-right">
-            <ion-button color="light" fill="outline" shape="round" class="header-btn" @click="$router.replace('/')">
+            <ion-button color="light" fill="outline" shape="round" class="header-btn" @click="$router.go(-1)">
               <ion-icon slot="icon-only" :icon="close" color="light"></ion-icon>
             </ion-button>
           </div>

@@ -36,7 +36,7 @@
     </ion-card>
 </template>
 
-<script lang="ts">
+<script lang="js">
 import { 
     IonGrid,
     IonRow,
@@ -49,13 +49,15 @@ import {
 } from '@ionic/vue';
 
 import {  heartOutline, heart, timeOutline, star, starOutline, statsChartOutline } from 'ionicons/icons';
-import { Recipe } from '@/interfaces/Recipe';
+
+import Recipe from "@/components/Recipe.vue";
 
 export default {
   name: 'RecipeListItem',
   props: {
     recipe: Object
   },
+  extends: Recipe,
   components: {
     IonGrid,
     IonRow,
@@ -70,11 +72,6 @@ export default {
     return {
         heartOutline, heart, timeOutline, star, starOutline, statsChartOutline
     };
-   },
-  methods: {
-    toggleLike(recipe: Recipe) {
-      recipe.liked = !recipe.liked;
-    },
   }
 }
 </script>

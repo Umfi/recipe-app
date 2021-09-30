@@ -16,7 +16,7 @@
     </ion-col>
 </template>
 
-<script lang="ts">
+<script lang="js">
 import { 
     IonCol,
     IonImg,
@@ -25,8 +25,8 @@ import {
 } from '@ionic/vue';
 
 import {  heartOutline, heart } from 'ionicons/icons';
-import { Recipe } from '@/interfaces/Recipe';
 
+import Recipe from "@/components/Recipe.vue";
 
 export default {
   name: 'RecipeCardItem',
@@ -34,6 +34,7 @@ export default {
     recipe: Object,
     size: Number
   },
+  extends: Recipe,
   components: {
     IonCol,
     IonImg,
@@ -46,9 +47,6 @@ export default {
        };
    },
    methods: {
-    toggleLike(recipe: Recipe) {
-      recipe.liked = !recipe.liked;
-    },
   }
 }
 </script>

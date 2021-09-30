@@ -70,7 +70,7 @@
 import { IonContent, IonPage, IonImg, IonIcon, IonButton, IonItem, IonLabel, IonChip, IonListHeader, IonList, IonCol, modalController } from '@ionic/vue';
 import { arrowBack, heartOutline, heart, timeOutline, star, starOutline, statsChartOutline, personOutline, flameOutline } from 'ionicons/icons';
 
-import Base from "@/components/Base.vue";
+import Recipe from "@/components/Recipe.vue";
 
 import { useRoute } from 'vue-router';
 
@@ -84,7 +84,7 @@ export default {
   components: {
     IonContent, IonPage, IonImg, IonIcon, IonButton, IonItem, IonLabel, IonChip, IonListHeader, IonList, IonCol
   },
-  extends: Base,
+  extends: Recipe,
   setup() {
     const route = useRoute();
     const { id } = route.params;
@@ -107,17 +107,20 @@ export default {
   },
   methods: {
      async showRateModal() {
-      const modal = await modalController
+      if (this.$store.state.userIsLoggedIn) {
+        const modal = await modalController
         .create({
           component: RateModal,
           initialBreakpoint: 0.4,
           breakpoints: [0, 0.4]
         })
-      return modal.present();
-    },
-    toggleLike(recipe) {
-      recipe.liked = !recipe.liked;
-    },
+        return modal.present();
+      } else {
+        this.showToast("You must be logged in to rate a recipe.");
+        this.$router.push("/login");
+        return null;
+      }
+    }
   }
 }
 </script>
