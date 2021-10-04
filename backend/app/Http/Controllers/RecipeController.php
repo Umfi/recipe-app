@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Favorite;
 use App\Models\Recipe;
 
 class RecipeController extends Controller
@@ -62,7 +63,7 @@ class RecipeController extends Controller
     public function trending(): \Illuminate\Http\JsonResponse
     {
         return response()->json(
-            Recipe::with(['ingredients','instructions', 'creator', 'favorites', 'ratings']) 
+            Recipe::with(['ingredients','instructions', 'creator', 'favorites', 'ratings'])
                 ->take(4)
                 ->get()
         );
@@ -74,10 +75,10 @@ class RecipeController extends Controller
      */
     public function recommended(): \Illuminate\Http\JsonResponse
     {
-        // TODO: Implement recommendations 
+        // TODO: Implement recommendations
 
         return response()->json(
-            Recipe::with(['ingredients','instructions', 'creator', 'favorites', 'ratings']) 
+            Recipe::with(['ingredients','instructions', 'creator', 'favorites', 'ratings'])
                 ->take(3)
                 ->get()
         );
@@ -94,5 +95,34 @@ class RecipeController extends Controller
             Recipe::with(['ingredients','instructions', 'creator', 'favorites', 'ratings'])
                 ->findOrFail($id)
         );
+    }
+
+    /**
+     * Like/Unlike a recipe
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function toggleLike($id): \Illuminate\Http\JsonResponse
+    {
+        Recipe::findOrFail($id);
+
+        $user_id = auth()->id();
+        $liked = Favorite::where('recipe', $id)->where('creator', $user_id)->first();
+        if ($liked) {
+            $liked->delete();
+
+            return response()->json([
+                'liked' => false,
+            ]);
+        } else {
+            $liked = new Favorite;
+            $liked->recipe = $id;
+            $liked->creator = $user_id;
+            $liked->save();
+
+            return response()->json([
+                'liked' => true,
+            ]);
+        }
     }
 }

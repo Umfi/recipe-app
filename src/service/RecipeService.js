@@ -73,6 +73,18 @@ class RecipeService {
 
             return data;
     }
+
+    async toggleLike(id) {
+        const data = await $axios({ url: config.API_BASE_URL + 'toggle-like-recipe/' + id, method: 'POST' })
+            .then(resp => {
+                return resp.data.liked;
+            }).catch(err => {
+                console.log(err);
+                return null;
+            })
+
+            return data;
+    }
 }
 
 export default new RecipeService();
